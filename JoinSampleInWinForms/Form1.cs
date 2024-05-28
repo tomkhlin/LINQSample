@@ -22,13 +22,18 @@ namespace JoinSampleInWinForms
             var students = GetStudents();
             var courses = GetCourses();
 
+            ShowData(students, courses);
+        }
+
+        private void ShowData(List<Student> students, List<Course> courses)
+        {
             this.dataGridView1.DataSource = courses;
             this.dataGridView1.Columns["CourseId"].HeaderText = "課程編號";
             this.dataGridView1.Columns["CourseName"].HeaderText = "課程名稱";
             this.dataGridView1.Columns["TeacherName"].HeaderText = "授課教師";
             this.dataGridView1.Columns["Credit"].HeaderText = "學分數";
             this.dataGridView1.Columns["IsRequired"].HeaderText = "是否為必修";
-            
+
             this.dataGridView2.DataSource = students;
             this.dataGridView2.Columns["StudentId"].HeaderText = "學號";
             this.dataGridView2.Columns["StudentName"].HeaderText = "姓名";
@@ -36,10 +41,43 @@ namespace JoinSampleInWinForms
             this.dataGridView2.Columns["Region"].HeaderText = "國家";
             this.dataGridView2.Columns["City"].HeaderText = "城市";
             this.dataGridView2.Columns["CourseId"].HeaderText = "課程編號";
-            this.dataGridView2.Columns["Score"].HeaderText = "總分";  
+            this.dataGridView2.Columns["Score"].HeaderText = "總分";
 
             this.panel1.Controls.Add(this.dataGridView1);
             this.panel2.Controls.Add(this.dataGridView2);
+        }
+
+        private void ShowInnerJoinData(List<Student> students, List<Course> courses)
+        {
+            var result = from student in students
+                         join course in courses on student.CourseId equals course.CourseId
+                         where student.Score >= 60
+                         select new
+                         {
+                             student.StudentId,
+                             student.StudentName,
+                             student.Age,
+                             student.Region,
+                             student.City,
+                             student.CourseId,                             
+                             course.CourseName,
+                             course.TeacherName,
+                             course.Credit,
+                             course.IsRequired,
+                             student.Score,
+                         };
+            this.dataGridView3.DataSource = result.ToList();
+            this.dataGridView3.Columns["StudentId"].HeaderText = "學號";
+            this.dataGridView3.Columns["StudentName"].HeaderText = "姓名";
+            this.dataGridView3.Columns["Age"].HeaderText = "年齡";
+            this.dataGridView3.Columns["Region"].HeaderText = "國家";
+            this.dataGridView3.Columns["City"].HeaderText = "城市";
+            this.dataGridView3.Columns["CourseId"].HeaderText = "課程編號";            
+            this.dataGridView3.Columns["CourseName"].HeaderText = "課程名稱";
+            this.dataGridView3.Columns["TeacherName"].HeaderText = "授課教師";
+            this.dataGridView3.Columns["Credit"].HeaderText = "學分數";
+            this.dataGridView3.Columns["IsRequired"].HeaderText = "是否為必修";
+            this.dataGridView3.Columns["Score"].HeaderText = "總分";
         }
 
         //取得課程資料
@@ -68,5 +106,12 @@ namespace JoinSampleInWinForms
                 new Student { StudentId = "B11002564", StudentName = "Jenny", Age = 21, Region = "美國", City = "紐約市", CourseId = "C11003", Score = 95},
                 new Student { StudentId = "B11002565", StudentName = "John", Age = 20, Region = "美國", City = "洛杉磯", CourseId = "C11005", Score = 70},
             };
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var students = GetStudents();
+            var courses = GetCourses();
+            ShowInnerJoinData(students, courses);
+        }
     }
 }
